@@ -61,6 +61,8 @@ async function processEvents() {
   } finally {
     rl.close();
     fileStream.destroy();
+    await pool.end();
+    console.log('Database connection closed.');
   }
 }
 
