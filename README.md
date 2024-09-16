@@ -1,14 +1,12 @@
 # UserRevenueETL - Event Processing System
 
 ## Project Overview
-This project demonstrates a simple ETL (Extract, Transform, Load) system that processes user revenue events.
-It consists of three main components:  
+This project demonstrates a simple ETL (Extract, Transform, Load) system that processes user revenue events. It consists of three main components:  
 1. **Client**: Extracts event data from a file and sends it to the server.  
-2. **Server**: Receives events from the client, processes the data, and saves it to a local file. The server also updates the database.  
-3. **Data Processor**: Processes the saved data files on the server side and updates the database accordingly.  
+2. **Server**: Receives events from the client and appends them to a local file.  
+3. **Data Processor**: Processes the saved data files on the server and updates the database accordingly.
 
-The system is designed to handle revenue events where a user can either add or subtract revenue. 
-It supports concurrent processing by creating unique files for each client request.
+The system is designed to handle revenue events where a user can either add or subtract revenue. It processes multiple requests by appending them to a single event file, and the Data Processor handles these events by reading and processing each event line-by-line from the file. When processing begins, the file is renamed to ensure no new data is added during processing.
 
 ## Prerequisites
 - **Node.js** (version 14.x or higher)  
@@ -20,28 +18,23 @@ It supports concurrent processing by creating unique files for each client reque
 To install all necessary dependencies, run:  
 npm install  
 
-
 2. **Setup PostgreSQL Database**  
 1. Open your PostgreSQL CLI or pgAdmin.  
 2. Run the following commands to create the database and user for the project:  
-
-CREATE DATABASE user_revenue_etl_db; 
+CREATE DATABASE user_revenue_etl_db;  
 CREATE USER etl_project_user WITH ENCRYPTED PASSWORD 'your_postgres_password';  
-GRANT ALL PRIVILEGES ON DATABASE user_revenue_etl_db TO etl_project_user; 
+GRANT ALL PRIVILEGES ON DATABASE user_revenue_etl_db TO etl_project_user;  
 
 3. Run the SQL script (`db.sql`) to create the necessary table:  
 psql -U etl_project_user -d user_revenue_etl_db -f db.sql
 
 3. **Run the Server**  
-Start the server by running:  
 node server.js  
 
 4. **Run the Client**  
-To send events from the client to the server, run:  
 node client.js  
 
 5. **Run the Data Processor**  
-To process the events and update the user revenue in the database, run:  
 node data_processor.js  
 
 ## Notes 
@@ -69,7 +62,3 @@ To ensure the system performs well under various conditions, I conducted several
 Running the Data Processor with multiple instances in parallel to verify how the system handles concurrent processing.
 Testing the system's ability to handle large files, such as a file containing 1 million records, to assess how it impacts system performance.
 These tests demonstrated that the system can handle both large-scale data and concurrent processing without issues.
-
-
-
-
